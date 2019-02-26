@@ -1,4 +1,4 @@
 # nodejsTuteFiles
 file repo for nodejs tutorials
-\n
-DEAR DANIEL: THIS DOESN'T INCLUDE express or lodash installation files
+ ---- 
+DEAR DANIEL: THIS DOESN'T INCLUDE express or lodash installation, use comments for those
