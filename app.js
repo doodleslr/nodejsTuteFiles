@@ -226,7 +226,7 @@
 // }).listen(3000);
 
 // CREATING PACKAGE.JSON FILE--------------------------------------------------------------------
-// npm init
+// > npm init
 // INSTALLING PACKAGES (REUSABLE CODE THAT CAN BE INCLUDED IN PROJECTS)
 // www.npmjs.com
 // > npm i lodash
@@ -247,11 +247,12 @@
 
 // USING express WEB FRAMEWORK------------------------------------------------------------------
 // www.expressjs.com
-//  npm init --yes  'TO SKIP ALL INIT CONFIGS'
-// npm i express
+// > npm init --yes  'TO SKIP ALL INIT CONFIGS'
+// > npm i express
 // USING GET, ROUTE PARAMS AND QUERY STRINGS
 // const express = require('express');
 // const app = express();
+
 // app.get('/', (req, res)=>{
 //     res.send('Hello ME!');
 // });
@@ -271,12 +272,181 @@
 // const express = require('express');
 // const path = require('path');
 // const app = express();
+
 // app.use(express.static('expressDepot'));
-// ALLOWS http://localhost:3000/divinebeast.jpg and etc but compromises folder security
-// USES ALIAS FOR FOLDER FOR ADDED SECURITY
+//     // ALLOWS http://localhost:3000/divinebeast.jpg and etc but compromises folder security
+//     // USES ALIAS FOR FOLDER FOR ADDED SECURITY
 // app.use('/public', express.static(path.join(__dirname, 'expressDepot')));
 // app.get('/', (req,res)=>{
 //     res.sendFile(path.join(__dirname, 'expressDepot', 'index.html'));
 // });
 // app.listen(3000);
-//1:54:38
+
+// HTTP POST WITH EXPRESS/BODY PARSER
+// BODY PARSER REQUIRED FOR EXPRESS TO PARSE POST DATA
+// STORES URL POST IN AN EASILY ACCESSIBLE req.body.x JS OBJECT
+// // bodyParser.urlencoded PHP EQUIVALENT IS $_POST
+// const express = require('express');
+// const path = require('path');
+// const bodyParser = require('body-parser');
+// const app = express();
+
+// app.use('/public', express.static(path.join(__dirname, 'expressDepot')));
+// app.use(bodyParser.urlencoded({extended: false}));
+// app.get('/', (req, res)=>{
+//     res.sendFile(path.join(__dirname, 'expressDepot', 'index.html'));
+// });
+// app.post('/', (req, res)=>{
+//     console.log(req.body);
+//     // insert database stuff here
+//     res.send('successfully posted data');
+// });
+// app.listen(3000);
+//--
+// JSON DATA W/ AJAX EXPRESS AND BODY PARSER
+// STORES JSON POST IN AN EASILY ACCESSIBLE req.body.x JS OBJECT
+// const express = require('express');
+// const path = require('path');
+// const bodyParser = require('body-parser');
+// const app = express();
+
+// app.use('/public', express.static(path.join(__dirname, 'expressDepot')));
+// app.use(bodyParser.urlencoded({extended: false}));
+// app.use(bodyParser.json()); //USING JSON BODYPARSER METHOD
+// app.get('/', (req, res)=>{
+//     res.sendFile(path.join(__dirname, 'expressDepot', 'index.html'));
+// });
+// app.post('/', (req, res)=>{
+//     console.log(req.body);
+//     // insert database stuff here
+//     res.json({success : true});
+// });
+// app.listen(3000);
+//--
+// AVOID USING LEGACY CONVENIENCE METHOD app.bodyParser() 
+// AS IT INCLUDES ALL THE MIDDLEWARE:
+//                                   .json()
+//                                   .urlencoded()
+//                                   .multipart()
+// DUE TO SECURiTY ISSUES WITH .multipart() IT IS RECCOMMENDED 
+// TO USE SPECIFICALLY .json() OR .urlencoded WHERE REQUIRED
+// INSTEAD OF THE BLANKET .bodyParser()
+// IF .multipart() IS REQURED FOR FILE UPLOAD REFER HERE FOR GUIDANCE:
+// https://groups.google.com/forum/#!msg/express-js/iP2VyhkypHo/5AXQiYN3RPcJ
+//--
+// VALIDATING USER INPUT W/ JOI
+// GUTEN TAG WOULD YOU LIKE A BITE OF MY ENGERCHAUTZEN BAR?
+// I ALSO HAVE A BAG OF MULTIFUN JOI-JOIS (MIT IODINE!)
+// > npm install joi
+// const express = require('express');
+// const path = require('path');
+// const bodyParser = require('body-parser');
+// const joijoi = require('joi');
+// const app = express();
+
+// app.use('/public', express.static(path.join(__dirname, 'expressDepot')));
+// app.use(bodyParser.urlencoded({extended: false}));
+
+// app.get('/', (req, res)=>{
+//     res.sendFile(path.join(__dirname, 'expressDepot', 'index.html'));
+// });
+
+// app.post('/', (req, res)=>{
+//     console.log(req.body);
+//     const schema = joijoi.object().keys({
+//         email : joijoi.string().trim().email().required(),
+//         password : joijoi.string().min(5).max(10).required()
+//     });
+//     joijoi.validate(req.body, schema, (err, result)=>{
+//         if(err){
+//             console.log(err);
+//             res.send('an error has occured');
+//         } else {
+//             console.log(result);
+//             res.send('successfully posted schema data');
+//         }
+//     });
+// });
+// app.listen(3000);
+//--
+// VALIDATING USER INPUT NESTED OBJECTS AND ARRAYS WITH JOI 
+// const joi = require('joi');
+
+// const arrayString = ['banana', 'bacon', 'cheese'];
+// const arrayObj = [{example: 'cats'}, {example: 'dogs'}, {example: 'buns'}];
+
+// const userInput = { personalInfo:{
+//                         streetAddress: '123 fake st',
+//                         city: 'Wok',
+//                         state: 'of mind'
+//                     },
+//                     preferences : arrayObj};
+
+// const personalInfoSchema = joi.object().keys({
+//                                streetAddress : joi.string().trim().required(),
+//                                city : joi.string().trim().required(),
+//                                state : joi.string().trim().required()
+//                             });
+// const prefSchema = joi.array().items(joi.object().keys({
+//     example: joi.string().required();
+// }));
+
+// const schema = joi.object().keys({
+//     personalInfo: personalInfoSchema,
+//     preferences: prefSchema
+// });
+
+// joi.validate(userInput, schema, (err, result)=>{
+//     if(err){
+//         console.log(err);
+//     } else {
+//         console.log(result);
+//     }
+// });
+// GET userInput AND PASS IT THROUGH schema TO MANIPULATE DATA AND ENSURE
+// userInput MEETS VALIDATION REQUIREMENTS SET IN personal/prefSchema
+
+// USING EJS TEMPLATES IN EXPRESS TO SERVE DYNAMIC DATA-----------------------------------------------------
+// USING ./views/index.ejs
+// QUERY OBTAINED FROM URL localhost:3000/cars
+// const express = require('express');
+// const path = require('path');
+// const app = express();
+
+// app.set('view engine', 'ejs');
+// app.get('/:userQuery', (req, res)=>{
+//     res.render('index',{data : {userQuery: req.params.userQuery,
+//                                 searchResults: ['car1','car2','car3','car4','car5'],
+//                                 login: true,
+//                                 username: 'Daniel'}
+//                         });
+// });
+
+// app.listen(3000);
+
+// USING CUSTOM MIDDLEWARE------------------------------------------------------------------------------------
+// next() IS ESSENTIAL WITH CUSTOM MIDDLEWARE OR SERVER TIMES OUT
+// const express = require('express');
+// const bodyParser = require('body-parser');
+// const app = express();
+
+// app.use((req, res, next)=>{
+//     req.fruit = 'mango';// DO THINGS HERE
+//     next();
+// });
+// app.get('/',(req, res)=>{
+//     console.log(req.fruit);
+//     res.send('middleware');
+// });
+// app.listen(3000);
+
+// WORKING W/ EXPRESS ROUTER----------------------------------------------------------------------------------
+// USES ./routes/people.js
+const express = require('express');
+const path = require('path');
+const app = express();
+
+const people = require('./routes/people');
+app.use('/people',people);
+
+app.listen(3000);
